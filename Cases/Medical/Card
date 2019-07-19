@@ -1,0 +1,22 @@
+Server: default
+
+Cases:
+  - CaseName: getCard
+    charger: xx # 负责人
+    detail: 发送卡券
+    api: /medicalcard/paCard/sendCard
+    method: get
+    In:
+      userId: 896
+      type: 42
+      sourceCode: ACTIVE_DATA_MIGRATE
+      value: 50
+      count: 1
+      data:
+    Out:
+      type: file # 支持key，验证字段内容，支持验证 type，key的类型：int，str，dict，list，bool,none,支持 file，直接验证整个返回结果完全校对，需要提供标准的结果保存文件名，放到Utils/Result文件夹下即可；
+      file: getCard1
+      code: str
+      msg: str
+      data: str
+

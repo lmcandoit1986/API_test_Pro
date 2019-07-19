@@ -1,0 +1,41 @@
+Server: default
+
+Cases:
+  - CaseName: getBXList
+    charger:  xx
+    detail: 获取投保保单列表
+    api: /mapi/policyList.json
+    method: get
+    In:
+      default: true
+      pageNo: 1
+      type: 1
+    Out:
+      type: key # 支持key，验证字段内容，支持验证 type，key的类型：int，str，dict，list，bool,none,支持 file，直接验证整个返回结果完全校对，需要提供标准的结果保存文件名，放到Utils/Result文件夹下即可；
+      code: 1
+  - CaseName: getBXList1
+    charger:  xx # 负责人
+    detail: 获取投保保单列表1
+    api: /mapi/policyList.json
+    method: get
+    In:
+      default: true
+      pageNo: 1
+      type: 1
+    Out:
+      type: type # 支持key，验证字段内容，支持验证 type，key的类型：int，str，dict，list，bool,none,支持 file，直接验证整个返回结果完全校对，需要提供标准的结果保存文件名，放到Utils/Result文件夹下即可；
+      code: int
+  - CaseName: getBXList2
+    charger:  xx # 负责人
+    detail: 获取投保保单列表2
+    api: /mapi/policyList.json
+    method: get
+    In:
+      default: true
+      pageNo: 1
+      type: 1
+    Out:
+      type: file # 支持key，验证字段内容，支持验证 type，key的类型：int，str，dict，list，bool,none,支持 file，直接验证整个返回结果完全校对，需要提供标准的结果保存文件名，放到Utils/Result文件夹下即可；
+      file: getCard1
+
+

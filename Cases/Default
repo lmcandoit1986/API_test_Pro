@@ -1,0 +1,60 @@
+Server: https://test-m.health.pingan.com
+accessToken: &Token 'CSddCECfcCmFNjmeP5c50Eqs4bP6FeHS'
+appVersion: &av 2
+appVersionName: &avn 3.11.0
+channel: &c App_Store
+deviceId: &di '152E6A06-CCE6-4908-BA78-723F9CFE135A'
+deviceType: &dt iPhone
+iphoneDesc: &id iPhone 8 Plus
+iphoneType: &it iPhone10,2
+language: &l zh
+platform: &platform 1
+netType: &net 1
+resolution: &resolution '{414, 736}'
+screenSize: &screenSize 11
+timestamp: &ts time.time()
+userId: &userId 914773
+vendorId: &vendorId '07402C8C-267C-4F24-AFAB-E5CA3BE28B7F'
+version: &version 1.0.1
+
+param:
+  accessToken: *Token
+  appVersion: *av
+  appVersionName: *avn
+  channel: *c
+  deviceId: *di
+  deviceType: *dt
+  iphoneDesc: *id
+  iphoneType: *it
+  language: *l
+  netType: *net
+  resolution: *resolution
+  screenSize: *screenSize
+  timestamp: *ts
+  userId: *userId
+  vendorId: *vendorId
+  version: *version
+  platform: *platform
+
+header:
+  User-Agent: PAHealth/3.11.0 (iPhone; iOS 12.1.1; Scale/3.00)
+  Accept-Language: zh-Hans-CN;q=1, en-CN;q=0.9
+  Accept-Encoding: br, gzip, deflate
+  Connection: keep-alive
+body:
+  accessToken: *Token
+  appVersion: *av
+  appVersionName: *avn
+  channel: *c
+  deviceId: *di
+  deviceType: *dt
+  iphoneDesc: *id
+  iphoneType: *it
+  language: *l
+  netType: *net
+  resolution: *resolution
+  screenSize: *screenSize
+  timestamp: *ts
+  userId: *userId
+  vendorId: *vendorId
+  version: *version
