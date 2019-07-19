@@ -8,7 +8,7 @@ from BaseTest import BaseTest
 from Utils import Request_Create
 
 
-class me(BaseTest):
+class run(BaseTest):
 
     def test_ssa(self):
         case = self.readConfig('Cases/Medical/List_bx')

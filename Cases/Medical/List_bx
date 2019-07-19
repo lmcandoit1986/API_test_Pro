@@ -1,5 +1,4 @@
 Server: default
-
 Cases:
   - CaseName: getBXList
     charger:  xx

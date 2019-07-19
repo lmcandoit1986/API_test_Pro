@@ -1,5 +1,5 @@
 Server: https://test-m.health.pingan.com
-accessToken: &Token 'CSddCECfcCmFNjmeP5c50Eqs4bP6FeHS'
+accessToken: &Token 'xxx'
 appVersion: &av 2
 appVersionName: &avn 3.11.0
 channel: &c App_Store
