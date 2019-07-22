@@ -14,7 +14,7 @@
 Default|默认配置参数，分server/get方法param/post方法header和body
 其他|用例
 
-### 用例格式
+### 用例格式-Get
 
     Server: default  #Server 可指定服务器，也可以默认 default，使用 Default文件的server 值
     Cases:  # Case体
@@ -41,6 +41,22 @@ Default|默认配置参数，分server/get方法param/post方法header和body
           # 举例 
           type: file
           file: standard_policyList          
+### 用例格式-Post
+    Cases:  # Case体
+      - CaseName: getBXList # 用例名称
+        charger:  xx # 负责人
+        detail: 获取投保保单列表 #用例详情
+        api: /mapi/policyList.json # 接口信息
+        method: post # 请求方式
+        header: default #使用 Default文件中的 header，也可以自行定制
+        body: # 接口特有的业务参数
+          default: true # 添加Default文件中的 body，不添加为 false
+          key1: 1
+          key2: add
+        Out: #出参 验证 同上
+          type: key 
+          code: 1
+
 ### 支持JSONPATH 定位
 
 定位结果数据时，支持JsonPath定位更深层的数据，写法见JSONPath规范
