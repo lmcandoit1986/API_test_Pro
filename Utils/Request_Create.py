@@ -396,5 +396,6 @@ def getMul(url):
         res['msg'] ='接口404'
         Log.print_info(1, 'INSTRUMENTATION_STATUS: thread={0},res={1}'.format(threading.currentThread().getName(),
                                                                               json.loads(res)))
+    Log.print_info(1, 'INSTRUMENTATION_STATUS: result=Pass')
 
 

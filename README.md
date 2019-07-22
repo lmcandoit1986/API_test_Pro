@@ -52,6 +52,8 @@ Entry/run.py
 * 支持指定文件夹执行
 * 支持全部用例执行
 
+* 支持接口多线程模拟访问，用于验证接口有判重的场景校验，该方法不做结果验证处理。
+
 ### 举例
         def test_example(self):
             case = self.readCasesFromDirectory('Medical') # 获取某个文件夹下的所有用例，用于获取各模块下的用例，目前不支持模块下再分文件夹
@@ -60,7 +62,27 @@ Entry/run.py
             Request_Create.create(case) # 正常执行用例
             #Request_Create.create(case,'getBXList1') # 执行用例中的某个用例
             #Request_Create.create(case, 'getBXList1','getBXList2') # 执行用例中的多个用例
+            #Request_Create.createThreading(case,2,'getBXList1') #该方法多线程调用2次
+            
+            
+### 日志输出
 
+        2019-07-22 09:56:54:INSTRUMENTATION_STATUS: CaseName=getBXList1
+        2019-07-22 09:56:54:INSTRUMENTATION_STATUS: Detail=获取投保保单列表1
+        2019-07-22 09:56:54:INSTRUMENTATION_STATUS: charger=xx
+        2019-07-22 09:56:54:INSTRUMENTATION_STATUS: path=Cases/Medical/List_bx
+        2019-07-22 10:23:06:INSTRUMENTATION_STATUS: result=Failed
+        2019-07-22 10:23:06:INSTRUMENTATION_STATUS: log=数据不匹配，检查返回:{'code': 22, 'msg': '登陆令牌超时，请重新登陆', 'data': None}
+        
+        2019-07-22 10:23:06:INSTRUMENTATION_STATUS: result=Pass
+        
+        2019-07-22 09:56:54:INSTRUMENTATION_STATUS: thread=Thread-1
+        2019-07-22 09:56:54:INSTRUMENTATION_STATUS: thread=Thread-2
+        2019-07-22 09:56:55:INSTRUMENTATION_STATUS: thread=Thread-1,time=489
+        2019-07-22 09:56:55:INSTRUMENTATION_STATUS:thread=Thread-1, res={'code': 22, 'msg': '登陆令牌超时，请重新登陆', 'data': None}
+        2019-07-22 09:56:55:INSTRUMENTATION_STATUS: thread=Thread-2,time=492
+        2019-07-22 09:56:55:INSTRUMENTATION_STATUS:thread=Thread-2, res={'code': 22, 'msg': '登陆令牌超时，请重新登陆', 'data': None}
+        2019-07-22 10:23:06:INSTRUMENTATION_STATUS: result=Pass
 ## 基础方法
 
 * Utils/Request_Create.create() 总入口，传入测试用例执行并验证结果
