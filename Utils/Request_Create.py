@@ -4,11 +4,11 @@
 import hashlib
 import json
 import os
+import threading
 import time
 from urllib import parse
 import numpy
 import requests
-
 import Config
 from Utils import Log
 
@@ -153,6 +153,139 @@ def create(Cases,*args):
                         inKey = Case['In']
                         print(parse.urlencode(inKey).encode('utf-8'))
 
+def createThreading(Cases,num,*args):
+
+    if type(Cases) == dict:
+        Server = numpy.where(Cases['Server']=='default', Config.Default['Server'], Cases['Server'])
+        for Case in Cases['Cases']:
+            if args:
+                Log.print_info(1, '已指定测试用例：{0}'.format(args) )
+                if Case['CaseName'] in args:
+                    url ='{0}{1}'.format(Server, Case['api'])
+                    Log.print_info(1, 'INSTRUMENTATION_STATUS: CaseName={0}'.format(Case['CaseName']) )
+                    Log.print_info(1, 'INSTRUMENTATION_STATUS: Detail={0}'.format(Case['detail']) )
+                    Log.print_info(1, 'INSTRUMENTATION_STATUS: charger={0}'.format(Case['charger']) )
+                    Log.print_info(1, 'INSTRUMENTATION_STATUS: path={0}'.format(Cases['path']))
+                    if Case['method'] == 'get':
+                        param = ''
+                        for key in Case['In']:
+                            if key == 'default':
+                                if Case['In'][key] == True:
+                                    Log.print_info(2,'Need insert Default Keys')
+                                    for dkey in Config.Default['param']:
+                                        if Config.Default['param'][dkey] == 'time.time()':
+                                            Config.Default['param'][dkey]= int(time.time())
+                                    param += parse.urlencode(Config.Default['param'])
+                                del Case['In']['default']
+                                break
+                        param += '&{0}'.format(parse.urlencode(Case['In']))
+                        Log.print_info(2, param)
+                        url_end = '{0}?{1}'.format(url,param.replace('=None','='))
+                        Log.print_info(2,url_end)
+                        urls = []
+                        for i in range(num):
+                            urls.append(url_end)
+                        [thread(url) for url in urls]
+
+                    elif Case['method']=='post':
+                        inKey= Case['In']
+                        print(parse.urlencode(inKey).encode('utf-8'))
+            else:
+                url = '{0}{1}'.format(Server, Case['api'])
+                Log.print_info(1, 'INSTRUMENTATION_STATUS: CaseName={0}'.format(Case['CaseName']))
+                Log.print_info(1, 'INSTRUMENTATION_STATUS: Detail={0}'.format(Case['detail']))
+                Log.print_info(1, 'INSTRUMENTATION_STATUS: charger={0}'.format(Case['charger']))
+                Log.print_info(1, 'INSTRUMENTATION_STATUS: path={0}'.format(Cases['path']))
+                if Case['method'] == 'get':
+                    param = ''
+                    for key in Case['In']:
+                        if key == 'default':
+                            if Case['In'][key] == True:
+                                Log.print_info(2, 'Need insert Default Keys')
+                                for dkey in Config.Default['param']:
+                                    if Config.Default['param'][dkey] == 'time.time()':
+                                        Config.Default['param'][dkey] = int(time.time())
+                                param += parse.urlencode(Config.Default['param'])
+                            del Case['In']['default']
+                            break
+                    param += '&{0}'.format(parse.urlencode(Case['In']))
+                    Log.print_info(2, param)
+                    url_end = '{0}?{1}'.format(url, param.replace('=None', '='))
+                    Log.print_info(2, url_end)
+                    urls = []
+                    for i in range(num):
+                        urls.append(url_end)
+                    [thread(url) for url in urls]
+
+                elif Case['method'] == 'post':
+                    inKey = Case['In']
+                    print(parse.urlencode(inKey).encode('utf-8'))
+    elif type(Cases) == list:
+        for cl in Cases:
+            Server = numpy.where(cl['Server'] == 'default', Config.Default['Server'], cl['Server'])
+            for Case in cl['Cases']:
+                if args:
+                    Log.print_info(1, '已指定测试用例：{0}'.format(args))
+                    if Case['CaseName'] in args:
+                        url = '{0}{1}'.format(Server, Case['api'])
+                        Log.print_info(1, 'INSTRUMENTATION_STATUS: CaseName={0}'.format(Case['CaseName']))
+                        Log.print_info(1, 'INSTRUMENTATION_STATUS: Detail={0}'.format(Case['detail']))
+                        Log.print_info(1, 'INSTRUMENTATION_STATUS: charger={0}'.format(Case['charger']))
+                        Log.print_info(1, 'INSTRUMENTATION_STATUS: path={0}'.format(cl['path']))
+                        if Case['method'] == 'get':
+                            param = ''
+                            for key in Case['In']:
+                                if key == 'default':
+                                    if Case['In'][key] == True:
+                                        Log.print_info(2, 'Need insert Default Keys')
+                                        for dkey in Config.Default['param']:
+                                            if Config.Default['param'][dkey] == 'time.time()':
+                                                Config.Default['param'][dkey] = int(time.time())
+                                        param += parse.urlencode(Config.Default['param'])
+                                    del Case['In']['default']
+                                    break
+                            param += '&{0}'.format(parse.urlencode(Case['In']))
+                            Log.print_info(2, param)
+                            url_end = '{0}?{1}'.format(url, param.replace('=None', '='))
+                            Log.print_info(2, url_end)
+                            urls = []
+                            for i in range(num):
+                                urls.append(url_end)
+                            [thread(url) for url in urls]
+
+                        elif Case['method'] == 'post':
+                            inKey = Case['In']
+                            print(parse.urlencode(inKey).encode('utf-8'))
+                else:
+                    url = '{0}{1}'.format(Server, Case['api'])
+                    Log.print_info(1, 'INSTRUMENTATION_STATUS: CaseName={0}'.format(Case['CaseName']))
+                    Log.print_info(1, 'INSTRUMENTATION_STATUS: Detail={0}'.format(Case['detail']))
+                    Log.print_info(1, 'INSTRUMENTATION_STATUS: charger={0}'.format(Case['charger']))
+                    Log.print_info(1, 'INSTRUMENTATION_STATUS: path={0}'.format(cl['path']))
+                    if Case['method'] == 'get':
+                        param = ''
+                        for key in Case['In']:
+                            if key == 'default':
+                                if Case['In'][key] == True:
+                                    Log.print_info(2, 'Need insert Default Keys')
+                                    for dkey in Config.Default['param']:
+                                        if Config.Default['param'][dkey] == 'time.time()':
+                                            Config.Default['param'][dkey] = int(time.time())
+                                    param += parse.urlencode(Config.Default['param'])
+                                del Case['In']['default']
+                                break
+                        param += '&{0}'.format(parse.urlencode(Case['In']))
+                        Log.print_info(2, param)
+                        url_end = '{0}?{1}'.format(url, param.replace('=None', '='))
+                        Log.print_info(2, url_end)
+                        urls = []
+                        for i in range(num):
+                            urls.append(url_end)
+                        [thread(url) for url in urls]
+
+                    elif Case['method'] == 'post':
+                        inKey = Case['In']
+                        print(parse.urlencode(inKey).encode('utf-8'))
 
 def get(url):
     res = requests.get(url=url)
@@ -243,5 +376,25 @@ def getMD5(file_path,Bytes=1024):
                 break
     ret = md5_1.hexdigest()
     return ret
+
+def thread(url):
+    x = threading.Thread(target=getMul, args=(url,)) #这里的args=(url,) 逗号是必须的,因为加了逗号才是只有一个元素的元组
+    x.start()
+
+def getMul(url):
+    Log.print_info(1,'INSTRUMENTATION_STATUS: thread start={0}'.format(threading.currentThread().getName()))
+    start_ = int(round(time.time() * 1000))
+    res = requests.get(url)
+    end_ = int(round(time.time() * 1000))
+    Log.print_info(1, 'INSTRUMENTATION_STATUS: thread={0},time={1}'.format(threading.currentThread().getName(),end_ - start_))
+    if res.status_code == 200:
+        Log.print_info(1, 'INSTRUMENTATION_STATUS:thread={0}, res={1}'.format(threading.currentThread().getName(),
+                                                                              json.loads(res.text)))
+    else:
+        res = {}
+        res['code'] = -1
+        res['msg'] ='接口404'
+        Log.print_info(1, 'INSTRUMENTATION_STATUS: thread={0},res={1}'.format(threading.currentThread().getName(),
+                                                                              json.loads(res)))
 
 
