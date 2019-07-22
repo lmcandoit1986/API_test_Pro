@@ -41,7 +41,32 @@ Default|默认配置参数，分server/get方法param/post方法header和body
           # 举例 
           type: file
           file: standard_policyList          
-     
+### 支持JSONPATH 定位
+
+定位结果数据时，支持JsonPath定位更深层的数据，写法见JSONPath规范
+
+Xpath|	JSONPath|	描述
+:---:|:---:|:---:
+/|	$	|跟节点
+.	|@	|现行节点
+/	|. or []	|取子节点
+..	|n/a	|就是不管位置，选择所有符合条件的条件
+*	|*	|匹配所有元素节点
+[]	|[]	|迭代器标示(可以在里面做简单的迭代操作，如数组下标，根据内容选值等)
+&#124|	[,]	|支持迭代器中做多选
+[]	|?()|	支持过滤操作
+n/a	|()	|支持表达式计算
+()	|n/a	|分组，JsonPath不支持     
+
+
+举例：
+        
+        #定位{'code':1,'result':{'name':'ceshi','res':true}} 中的res
+        $.result.res : true
+        $['result']['res'] : true
+        $..res : true
+        以上三种写法都支持
+
 
 ## 用例执行入口
 

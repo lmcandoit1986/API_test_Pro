@@ -9,6 +9,7 @@ import time
 from urllib import parse
 import numpy
 import requests
+from jsonpath import jsonpath
 import Config
 from Utils import Log
 
@@ -17,8 +18,8 @@ def create(Cases,*args):
         Server = numpy.where(Cases['Server']=='default', Config.Default['Server'], Cases['Server'])
         for Case in Cases['Cases']:
             if args:
-                Log.print_info(1, '已指定测试用例：{0}'.format(args) )
                 if Case['CaseName'] in args:
+                    Log.print_info(1, '已匹配到指定测试用例：{0}'.format(Case['CaseName']))
                     url ='{0}{1}'.format(Server, Case['api'])
                     Log.print_info(1, 'INSTRUMENTATION_STATUS: CaseName={0}'.format(Case['CaseName']) )
                     Log.print_info(1, 'INSTRUMENTATION_STATUS: Detail={0}'.format(Case['detail']) )
@@ -87,8 +88,8 @@ def create(Cases,*args):
             Server = numpy.where(cl['Server'] == 'default', Config.Default['Server'], cl['Server'])
             for Case in cl['Cases']:
                 if args:
-                    Log.print_info(1, '已指定测试用例：{0}'.format(args))
                     if Case['CaseName'] in args:
+                        Log.print_info(1, '已匹配到指定测试用例：{0}'.format(Case['CaseName']))
                         url = '{0}{1}'.format(Server, Case['api'])
                         Log.print_info(1, 'INSTRUMENTATION_STATUS: CaseName={0}'.format(Case['CaseName']))
                         Log.print_info(1, 'INSTRUMENTATION_STATUS: Detail={0}'.format(Case['detail']))
@@ -304,14 +305,19 @@ def check(Case,Response):
             if keyOut == 'type':
                 pass
             else:
-                if isinstance(Case['Out'][keyOut], int):
-                    Error = numpy.where(Case['Out'][keyOut] == int(Response[keyOut]), 'Pass',
-                                        'expect:{0},Actual:{1},Res:{2}'.format(Case['Out'][keyOut],
-                                                                               Response[keyOut], Response))
+                if '$' in keyOut:
+                    Log.print_info(2,"use Jsonpath")
+                    res = jsonpath(Response,keyOut)
+                    if res:
+                        Error = numpy.where(Case['Out'][keyOut] in res, 'Pass',
+                                            'expect:{0},Actual:{1},Res:{2}'.format(Case['Out'][keyOut],
+                                                                                   res, Response))
+                    else:
+                        Error = 'Failed,{0} 查找不到匹配 key'.format(keyOut)
                 else:
                     Error = numpy.where(Case['Out'][keyOut] == Response[keyOut], 'Pass',
-                                        'expect:{0},Actual:{1},Res:{2}'.format(Case['Out'][keyOut],
-                                                                               Response[keyOut], Response))
+                                    'expect:{0},Actual:{1},Res:{2}'.format(Case['Out'][keyOut],
+                                                                           Response[keyOut], Response))
                 if 'Pass' != Error:
                     isPass = False
                     Log.print_info(1, 'INSTRUMENTATION_STATUS: result=Failed')
