@@ -38,6 +38,7 @@ def dealCases(Server,Case,Cases):
     url = '{0}{1}'.format(Server, Case['api'])
     Log.print_info(1, 'INSTRUMENTATION_STATUS: CaseName={0}'.format(Case['CaseName']))
     Log.print_info(1, 'INSTRUMENTATION_STATUS: Detail={0}'.format(Case['detail']))
+    Log.print_info(1, 'INSTRUMENTATION_STATUS: api={0}'.format(Case['api']))
     Log.print_info(1, 'INSTRUMENTATION_STATUS: charger={0}'.format(Case['charger']))
     Log.print_info(1, 'INSTRUMENTATION_STATUS: path={0}'.format(Cases['path']))
     if Case['method'] == 'get':
@@ -194,6 +195,7 @@ def check(Case,Response):
 
         if isPass:
             Log.print_info(1, 'INSTRUMENTATION_STATUS: result=Pass')
+            Log.print_info(1, 'INSTRUMENTATION_STATUS: log={0}'.format('null'))
     elif Case['Out']['type'] == 'type':
         isPass = True
         for keyOut in Case['Out']:
@@ -225,11 +227,16 @@ def check(Case,Response):
         if isPass:
             Log.print_info(1, 'INSTRUMENTATION_STATUS: result=Pass')
     elif Case['Out']['type'] == 'file':
-        file = open('./Result/{0}'.format(Case['CaseName']),'w')
+        Local = os.getcwd()
+        if Local.endswith('API_test_Pro'):
+            pass
+        else:
+            Local = Local.split('API_test_Pro')[0]+'API_test_Pro'
+        file = open('{1}/Entry/Result/{0}'.format(Case['CaseName'], Local), 'w')
         file.write(str(Response))
         file.close()
-        Actual = getMD5('./Result/{0}'.format(Case['CaseName']))
-        expect = getMD5(os.getcwd().replace('Entry','Utils/Result/{0}'.format(Case['Out']['file'])))
+        Actual = getMD5('{1}/Entry/Result/{0}'.format(Case['CaseName'], Local))
+        expect = getMD5('{1}/Utils/Result/{0}'.format(Case['Out']['file'], Local))
         Error = numpy.where(Actual == expect, 'Pass',
                             '数据不匹配，检查返回:{0}'.format(Response))
         if 'Pass' != Error:
@@ -237,7 +244,7 @@ def check(Case,Response):
             Log.print_info(1, 'INSTRUMENTATION_STATUS: log={0}'.format(Error))
         else:
             Log.print_info(1, 'INSTRUMENTATION_STATUS: result=Pass')
-            os.remove('./Result/{0}'.format(Case['CaseName']))
+            os.remove('{1}/Entry/Result/{0}'.format(Case['CaseName'],Local))
 
 def getMD5(file_path,Bytes=1024):
     md5_1 = hashlib.md5()

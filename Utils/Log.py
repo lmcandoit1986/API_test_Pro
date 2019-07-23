@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 
-Lev = 2
+Lev = 1
 global log
 
 def print_info(level,context):
