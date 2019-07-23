@@ -32,7 +32,7 @@ def create(Cases,*args):
                         Log.print_info(1, '已匹配到指定测试用例：{0}'.format(Case['CaseName']))
                         dealCases(Server, Case, Cases)
                 else:
-                    dealCases(Server, Case, Cases)
+                    dealCases(Server, Case, cl)
 
 def dealCases(Server,Case,Cases):
     url = '{0}{1}'.format(Server, Case['api'])
@@ -100,8 +100,8 @@ def createThreading(Cases,num,*args):
                         Log.print_info(1, '已匹配到指定测试用例：{0}'.format(Case['CaseName']))
                         dealCasesMulThreading(Server, Case, Cases, num)
                 else:
-                    dealCasesMulThreading(Server, Case, Cases, num)
-               
+                    dealCasesMulThreading(Server, Case, cl, num)
+
 def dealCasesMulThreading(Server,Case,Cases,num):
     url = '{0}{1}'.format(Server, Case['api'])
     Log.print_info(1, 'INSTRUMENTATION_STATUS: CaseName={0}'.format(Case['CaseName']))
