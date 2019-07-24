@@ -7,6 +7,13 @@
 测试入口|Entry/run.py|测试用例运行入口|
 方法封装|Utils/|解析数据，组成用例执行并验证|
 
+### 环境
+* Python3
+* 相关模块
+    * numpy
+    * yaml 
+    * jsonpath
+
 ## 用例编辑规范
 
 文件|备注
@@ -15,6 +22,7 @@ Default|默认配置参数，分server/get方法param/post方法header和body
 其他|用例
 
 ### 用例格式-Get
+    注意：当入参中的参数 和 Default中的参数有冲突时，保留个人的入参
 
     Server: default  #Server 可指定服务器，也可以默认 default，使用 Default文件的server 值
     Cases:  # Case体
@@ -42,6 +50,7 @@ Default|默认配置参数，分server/get方法param/post方法header和body
           type: file
           file: standard_policyList          
 ### 用例格式-Post
+    注意：当入参body中的参数 和 Default中的参数有冲突时，保留个人的入参
     Cases:  # Case体
       - CaseName: getBXList # 用例名称
         charger:  xx # 负责人
