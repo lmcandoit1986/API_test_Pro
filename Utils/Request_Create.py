@@ -30,7 +30,7 @@ def create(Cases,*args):
                 if args:
                     if Case['CaseName'] in args:
                         Log.print_info(1, '已匹配到指定测试用例：{0}'.format(Case['CaseName']))
-                        dealCases(Server, Case, Cases)
+                        dealCases(Server, Case, cl)
                 else:
                     dealCases(Server, Case, cl)
 
@@ -42,15 +42,17 @@ def dealCases(Server,Case,Cases):
     Log.print_info(1, 'INSTRUMENTATION_STATUS: charger={0}'.format(Case['charger']))
     Log.print_info(1, 'INSTRUMENTATION_STATUS: path={0}'.format(Cases['path']))
     if Case['method'] == 'get':
+        paramDict = Config.Default['param']
         for key in Case['In']:
-            if key == 'default':
-                if Case['In'][key] == True:
-                    Log.print_info(2, 'Need insert Default Keys')
-                    dict_def(Config.Default['param'])
-                    dict_def(Case['In'])
+            if key in paramDict and Case['In'].get('default'):
+                del paramDict[key]
+        if 'default' in Case['In']:
+            if Case['In']['default'] == True:
+                Log.print_info(2, 'Need insert Default Keys')
+                dict_def(paramDict)
+                dict_def(Case['In'])
                 del Case['In']['default']
-                break
-        Case['In'].update(Config.Default['param'])
+        Case['In'].update(paramDict)
         Log.print_info(3, 'param:{0}'.format(Case['In']))
         param = parse.urlencode(Case['In'])
         url_end = '{0}?{1}'.format(url, param.replace('=None', '='))
@@ -63,18 +65,20 @@ def dealCases(Server,Case,Cases):
         check(Case, Response)
 
     elif Case['method'] == 'post':
+        paramDict = Config.Default['body']
         if Case['header'] == 'default':
             Case['header'] = Config.Default['header']
 
-        for key in Case['body']:
-            if key == 'default':
-                if Case['body'][key] == True:
-                    Log.print_info(2, 'Need insert Default Keys')
-                    dict_def(Config.Default['body'])
-                    dict_def(Case['body'])
+        if 'default' in Case['body']:
+            if Case['body']['default'] == True:
+                Log.print_info(2, 'Need insert Default Keys')
+                dict_def(paramDict)
+                dict_def(Case['body'])
                 del Case['body']['default']
-                break
-        Case['body'].update(Config.Default['body'])
+        for key in Case['body']:
+            if key in paramDict and 'default' in Case['body']:
+                del paramDict[key]
+        Case['body'].update(paramDict)
         start_ = int(round(time.time() * 1000))
         Response = post(url, header=Case['header'], body=Case['body'])
         end_ = int(round(time.time() * 1000))

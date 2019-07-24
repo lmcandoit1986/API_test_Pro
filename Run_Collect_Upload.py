@@ -5,6 +5,7 @@ import sys
 import time
 from subprocess import Popen, PIPE, STDOUT
 
+import numpy
 import requests
 from jsonpath import jsonpath
 
@@ -20,8 +21,7 @@ class AutoCase(object):
         Check_Result = False
         all =[]
         while self.ProcessCMD.poll() is None:
-            Results = self.ProcessCMD.stdout.readline().decode("utf-8").strip().replace('\\n','')
-                #
+            Results = self.ProcessCMD.stdout.readline().decode("utf-8").strip().replace('\\n', '')
             print (Results)
             if Check_Name:
                 item={}
@@ -47,30 +47,36 @@ class AutoCase(object):
                     else:
                         item['res'] = -1
                 if 'INSTRUMENTATION_STATUS: log' in Results:
-                    item['comment'] = Results.split('=')[1].replace('\'','')\
-                        .replace('"','').replace('{',' ')\
-                        .replace('}',' ').replace('[',' ')\
-                        .replace(']',' ')
+                    item['comment'] = Results.split('=')[1].replace('\'', '')\
+                        .replace('"', '').replace('{', ' ')\
+                        .replace('}', ' ').replace('[', ' ')\
+                        .replace(']', ' ')
                     Check_Result = False
                     Check_Name = True
                     all.append(item)
                     continue
-        result ={}
-        data ={}
-        data['rt'] = time.strftime("%Y-%m-%d %X",time.localtime())
-        data['allCaseNum'] = len(all)
-        data['FailCaseName'] = getFailed(all)
-        data['only'] = time.strftime("%Y%m%d%H%M",time.localtime())
-        data['result'] = all
-        result['data'] = data
-        requests.post('http://152.136.202.79:9092/server/monitor/push',json=result)
+        jd = self.createDict(all)
+        res = requests.post('http://152.136.202.79:9092/server/monitor/push', json=jd)
+        print(res.status_code)
+        print('url:http://152.136.202.79:9092/web/watcher?only={0}'.format(jd['data']['only']))
 
-def getFailed(lists):
-    i=0
-    for line in lists:
-        if line['res']== -1:
-            i+=1
-    return i
+    def createDict(self, item):
+        result = {}
+        data = {}
+        data['rt'] = time.strftime("%Y-%m-%d %X", time.localtime())
+        data['allCaseNum'] = len(item)
+        data['FailCaseName'] = self.getFailed(item)
+        data['only'] = time.strftime("%Y%m%d%H%M", time.localtime())
+        data['result'] = item
+        result['data'] = data
+        return result
+
+    def getFailed(self, lists):
+        i = 0
+        for line in lists:
+            if line['res'] == -1:
+                i += 1
+        return i
 
 Auto = AutoCase()
 Auto.RunCase()
