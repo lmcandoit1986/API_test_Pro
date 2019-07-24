@@ -1,13 +1,11 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
+
 import os
 import sys
 import time
 from subprocess import Popen, PIPE, STDOUT
-
-import numpy
 import requests
-from jsonpath import jsonpath
 
 curPath = os.path.abspath(os.path.dirname(__file__))
 rootPath = os.path.split(curPath)[0]

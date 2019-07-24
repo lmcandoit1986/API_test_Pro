@@ -14,6 +14,12 @@ import Config
 from Utils import Log
 
 def create(Cases,*args):
+    '''
+    校验出入参数，并走执行case的步骤
+    :param Cases:
+    :param args:
+    :return:
+    '''
     if type(Cases) == dict:
         Server = numpy.where(Cases['Server']=='default', Config.Default['Server'], Cases['Server'])
         for Case in Cases['Cases']:
@@ -35,6 +41,13 @@ def create(Cases,*args):
                     dealCases(Server, Case, cl)
 
 def dealCases(Server,Case,Cases):
+    '''
+    处理数据，并做数据处理，转换成访问请求，并做验证
+    :param Server:
+    :param Case:
+    :param Cases:
+    :return:
+    '''
     url = '{0}{1}'.format(Server, Case['api'])
     Log.print_info(1, 'INSTRUMENTATION_STATUS: CaseName={0}'.format(Case['CaseName']))
     Log.print_info(1, 'INSTRUMENTATION_STATUS: Detail={0}'.format(Case['detail']))
@@ -87,6 +100,13 @@ def dealCases(Server,Case,Cases):
         check(Case, Response)
 
 def createThreading(Cases,num,*args):
+    '''
+    多线程触发请求的入口
+    :param Cases:
+    :param num:生成线程数
+    :param args:
+    :return:
+    '''
     if type(Cases) == dict:
         Server = numpy.where(Cases['Server']=='default', Config.Default['Server'], Cases['Server'])
         for Case in Cases['Cases']:
@@ -108,6 +128,14 @@ def createThreading(Cases,num,*args):
                     dealCasesMulThreading(Server, Case, cl, num)
 
 def dealCasesMulThreading(Server,Case,Cases,num):
+    '''
+    多线程触发请求的入口
+    :param Server:
+    :param Case:
+    :param Cases:
+    :param num:
+    :return:
+    '''
     url = '{0}{1}'.format(Server, Case['api'])
     Log.print_info(1, 'INSTRUMENTATION_STATUS: CaseName={0}'.format(Case['CaseName']))
     Log.print_info(1, 'INSTRUMENTATION_STATUS: Detail={0}'.format(Case['detail']))
@@ -155,6 +183,11 @@ def dealCasesMulThreading(Server,Case,Cases,num):
         [threadPost(url_item, Case['header'], Case['body']) for url_item in urls]
 
 def get(url):
+    '''
+    get请求封装
+    :param url:
+    :return:
+    '''
     res = requests.get(url=url)
     if res.status_code == 200:
         return (json.loads(res.text))
@@ -165,6 +198,13 @@ def get(url):
         return res
 
 def post(url,header,body):
+    '''
+    Post请求封装
+    :param url:
+    :param header:
+    :param body:
+    :return:
+    '''
     Log.print_info(2, 'header:{0}'.format(header))
     Log.print_info(2, 'body:{0}'.format(body))
     res = requests.post(url=url, headers=header, json=body)
@@ -177,7 +217,16 @@ def post(url,header,body):
         return res
 
 def check(Case,Response):
+    '''
+    检查返回结果
+    :param Case:
+    :param Response:
+    :return:
+    '''
     if Case['Out']['type'] == 'key':
+        '''
+        校验返回的指定key的value值
+        '''
         isPass = True
         for keyOut in Case['Out']:
             if keyOut == 'type':
@@ -206,6 +255,9 @@ def check(Case,Response):
             Log.print_info(1, 'INSTRUMENTATION_STATUS: result=Pass')
             Log.print_info(1, 'INSTRUMENTATION_STATUS: log={0}'.format('null'))
     elif Case['Out']['type'] == 'type':
+        '''
+        校验返回结果指定key的type数据类型
+        '''
         isPass = True
         for keyOut in Case['Out']:
             if keyOut == 'type':
@@ -236,6 +288,9 @@ def check(Case,Response):
         if isPass:
             Log.print_info(1, 'INSTRUMENTATION_STATUS: result=Pass')
     elif Case['Out']['type'] == 'file':
+        '''
+        校验整体返回
+        '''
         Local = os.getcwd()
         if Local.endswith('API_test_Pro'):
             pass
@@ -256,6 +311,12 @@ def check(Case,Response):
             os.remove('{1}/Entry/Result/{0}'.format(Case['CaseName'],Local))
 
 def getMD5(file_path,Bytes=1024):
+    '''
+    获取文件MD5值
+    :param file_path:
+    :param Bytes:
+    :return:
+    '''
     md5_1 = hashlib.md5()
     with open(file_path, 'rb') as f:
         while 1:
@@ -268,14 +329,31 @@ def getMD5(file_path,Bytes=1024):
     return ret
 
 def thread(url):
+    '''
+    多线程启动get请求
+    :param url:
+    :return:
+    '''
     x = threading.Thread(target=getMul, args=(url,)) #这里的args=(url,) 逗号是必须的,因为加了逗号才是只有一个元素的元组
     x.start()
 
 def threadPost(url,header,body):
-    x = threading.Thread(target=postMul, args=(url,header,body,)) #这里的args=(url,) 逗号是必须的,因为加了逗号才是只有一个元素的元组
+    '''
+    多线程启动post情趣
+    :param url:
+    :param header:
+    :param body:
+    :return:
+    '''
+    x = threading.Thread(target=postMul, args=(url,header,body,))
     x.start()
 
 def getMul(url):
+    '''
+    get请求，多线程场景
+    :param url:
+    :return:
+    '''
     Log.print_info(1,'INSTRUMENTATION_STATUS: thread start={0}'.format(threading.currentThread().getName()))
     start_ = int(round(time.time() * 1000))
     res = requests.get(url)
@@ -293,6 +371,13 @@ def getMul(url):
     Log.print_info(1, 'INSTRUMENTATION_STATUS: thread={0},result=Pass'.format(threading.currentThread().getName()))
 
 def postMul(url,header,body):
+    '''
+    post请求，多线程场景
+    :param url:
+    :param header:
+    :param body: 直接传字典数据即可
+    :return:
+    '''
     Log.print_info(1,'INSTRUMENTATION_STATUS: thread start={0}'.format(threading.currentThread().getName()))
     start_ = int(round(time.time() * 1000))
     res = requests.post(url, headers=header, json=body)
@@ -310,6 +395,11 @@ def postMul(url,header,body):
     Log.print_info(1, 'INSTRUMENTATION_STATUS: thread={0},result=Pass'.format(threading.currentThread().getName()))
 
 def dict_def(targetDict):
+    '''
+    用于yaml文件中的参数定义函数化，所有函数的定义在这里转换为实际值
+    :param targetDict:
+    :return:
+    '''
     for key in targetDict:
         if targetDict[key] == 'time.time()':
             targetDict[key] = int(time.time())

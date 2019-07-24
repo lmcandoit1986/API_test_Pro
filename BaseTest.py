@@ -30,6 +30,11 @@ class BaseTest(unittest.TestCase):
         Log.print_info(2,'teardown')
 
     def readCasesFromDirectory(self,file):
+        '''
+        读取文件下的用例
+        :param file:
+        :return:
+        '''
         filePath = os.path.dirname(__file__)
         yamlPath_dic = os.path.join(filePath, 'Cases/' + file)
         files = os.listdir(yamlPath_dic)
@@ -47,6 +52,11 @@ class BaseTest(unittest.TestCase):
         return Cases
 
     def readCasesFromClass(self,file):
+        '''
+        读取类中的用例
+        :param file:
+        :return:
+        '''
         filePath = os.path.dirname(__file__)
         yamlPath = os.path.join(filePath, 'Cases/' + file)
         f = open(yamlPath, 'r', encoding='utf-8')
@@ -57,6 +67,10 @@ class BaseTest(unittest.TestCase):
         return x
 
     def readAllCases(self):
+        '''
+        读取全部用例
+        :return:
+        '''
         filePath = os.path.dirname(__file__)
         yamlPath = os.path.join(filePath, 'Cases')
         files = os.listdir(yamlPath)
