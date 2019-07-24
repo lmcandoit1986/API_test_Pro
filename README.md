@@ -136,3 +136,10 @@ Entry/run.py
 ## 基础方法
 
 * Utils/Request_Create.create() 总入口，传入测试用例执行并验证结果
+
+### 对接 http://152.136.202.79:9092/web/index
+    统一执行入口：
+    cd  ./API_test_Pro
+    python3 Run_Collect_Upload.py 
+    执行完成后输出结果查看地址：
+    url:http://152.136.202.79:9092/web/watcher?only=201907240950
