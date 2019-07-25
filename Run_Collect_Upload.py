@@ -10,6 +10,7 @@ import requests
 curPath = os.path.abspath(os.path.dirname(__file__))
 rootPath = os.path.split(curPath)[0]
 sys.path.append(rootPath)
+import Config
 
 class AutoCase(object):
     cmd ='python3 -m unittest Entry/run.py'
@@ -54,9 +55,12 @@ class AutoCase(object):
                     all.append(item)
                     continue
         jd = self.createDict(all)
+        print(jd)
+
         res = requests.post('http://152.136.202.79:9092/server/monitor/push', json=jd)
         print(res.status_code)
         print('url:http://152.136.202.79:9092/web/watcher?only={0}'.format(jd['data']['only']))
+
 
     def createDict(self, item):
         result = {}

@@ -162,6 +162,9 @@ def dealCasesMulThreading(Server,Case,Cases,num):
             urls.append(url_end)
         [thread(url) for url in urls]
 
+        Log.print_info(1, 'INSTRUMENTATION_STATUS: result=Pass')
+        Log.print_info(1, 'INSTRUMENTATION_STATUS: log={0}'.format('null'))
+
     elif Case['method'] == 'post':
         paramDict = Config.Default['body']
         if Case['header'] == 'default':
@@ -181,6 +184,9 @@ def dealCasesMulThreading(Server,Case,Cases,num):
         for i in range(num):
             urls.append(url)
         [threadPost(url_item, Case['header'], Case['body']) for url_item in urls]
+
+        Log.print_info(1, 'INSTRUMENTATION_STATUS: result=Pass')
+        Log.print_info(1, 'INSTRUMENTATION_STATUS: log={0}'.format('null'))
 
 def get(url):
     '''
